@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.danielgmyers.metrics</groupId>
+        <artifactId>metric-recorder-pom</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <artifactId>in-memory-recorder</artifactId>
+    <name>In-Memory Metric Recorder</name>
+    <description>Metric Recorder is a library providing a generic interface for recording performance or other metrics.</description>
+    <url>https://github.com/danielgmyers/metric-recorder</url>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <dependencies>
+        <!-- internal dependencies -->
+        <dependency>
+            <artifactId>recorder-base</artifactId>
+            <groupId>com.danielgmyers.metrics</groupId>
+            <version>${recorder.version}</version>
+            <optional>false</optional>
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit5.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>slf4j-nop</artifactId>
+            <groupId>org.slf4j</groupId>
+            <version>${slf4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
