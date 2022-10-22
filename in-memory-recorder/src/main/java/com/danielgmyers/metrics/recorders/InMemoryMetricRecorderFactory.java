@@ -16,12 +16,14 @@
 
 package com.danielgmyers.metrics.recorders;
 
+import java.time.Clock;
+
 import com.danielgmyers.metrics.MetricRecorder;
 import com.danielgmyers.metrics.MetricRecorderFactory;
 
 public class InMemoryMetricRecorderFactory implements MetricRecorderFactory {
     @Override
-    public MetricRecorder newMetricRecorder(String operation) {
-        return new InMemoryMetricRecorder(operation);
+    public MetricRecorder newMetricRecorder(String operation, Clock clock) {
+        return new InMemoryMetricRecorder(operation, clock);
     }
 }

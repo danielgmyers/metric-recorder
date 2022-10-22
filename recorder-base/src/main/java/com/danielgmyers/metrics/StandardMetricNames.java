@@ -20,8 +20,8 @@ package com.danielgmyers.metrics;
  * An enum representing a few standard metric names. Metrics with these names will be emitted by all MetricRecorder
  * implementations. When the MetricRecorder's close() method returns, the following metrics will have been recorded:
  *
- * The "Operation" property will contain the value that was passed to the MetricRecorderFactory.newMetricRecorder() method.
- * The "ThreadName" property will contain the name of the current thread at the time the MetricRecorder is closed.
+ * The Operation property will contain the value that was passed to the MetricRecorderFactory.newMetricRecorder() method.
+ * The ThreadName property will contain the name of the current thread at the time the MetricRecorder is closed.
  *
  * The StartTime timestamp will contain the Instant at which the MetricRecorder object was created.
  * The EndTime timestamp will contain the Instant at which the MetricRecorder object's close() method was called.

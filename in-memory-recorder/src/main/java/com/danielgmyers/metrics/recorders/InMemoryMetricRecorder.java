@@ -16,6 +16,7 @@
 
 package com.danielgmyers.metrics.recorders;
 
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
@@ -34,7 +35,11 @@ public class InMemoryMetricRecorder extends MetricRecorder {
     private final Map<String, Duration> durations;
 
     public InMemoryMetricRecorder(String operation) {
-        super(operation);
+        this(operation, Clock.systemUTC());
+    }
+
+    public InMemoryMetricRecorder(String operation, Clock clock) {
+        super(operation, clock);
         this.properties = new HashMap<>();
         this.dates = new HashMap<>();
         this.counts = new HashMap<>();

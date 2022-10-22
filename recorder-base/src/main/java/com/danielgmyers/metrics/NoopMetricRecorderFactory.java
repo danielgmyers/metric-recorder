@@ -16,14 +16,16 @@
 
 package com.danielgmyers.metrics;
 
+import java.time.Clock;
+
 /**
  * Produces MetricRecorder objects that discard all metrics.
  */
 public class NoopMetricRecorderFactory implements MetricRecorderFactory {
     @Override
-    public MetricRecorder newMetricRecorder(String operation) {
+    public MetricRecorder newMetricRecorder(String operation, Clock clock) {
         // The default MetricRecorder hooks do nothing, so the base class itself is already a noop recorder.
         // We can't use a singleton instance because the disallow-writes-after-close behavior needs to be enforced.
-        return new MetricRecorder(operation) {};
+        return new MetricRecorder(operation, clock) {};
     }
 }

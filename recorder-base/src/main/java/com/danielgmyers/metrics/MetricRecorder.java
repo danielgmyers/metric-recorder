@@ -26,10 +26,13 @@ import java.util.Set;
 
 /**
  * A generic interface for emitting metrics to an arbitrary recording mechanism.
+ *
+ * This class implements AutoCloseable to encourage use with try-with-resources blocks.
  */
 public abstract class MetricRecorder implements AutoCloseable {
 
     private boolean closed;
+    private final Clock clock;
     private final Instant startTime;
     private final String operation;
 
@@ -38,16 +41,17 @@ public abstract class MetricRecorder implements AutoCloseable {
     /**
      * Initializes the MetricRecorder.
      */
-    protected MetricRecorder(String operation) {
-        this.startTime = Instant.now();
+    protected MetricRecorder(String operation, Clock clock) {
+        this.clock = clock;
+        this.startTime = clock.instant();
         this.operation = operation;
     }
 
     /**
      * Closes this set of metrics. After close() is called, new metrics may no longer be recorded with this object.
      * Implementations should store, publish, or otherwise record the metrics at this time.
-     *
      * This method closes any open durations, and emits the standard metrics listed in StandardMetricNames.
+     * Throws an IllegalStateException if the MetricRecorder is already closed.
      */
     public final void close() {
         verifyNotClosed();
@@ -61,7 +65,7 @@ public abstract class MetricRecorder implements AutoCloseable {
         addProperty(StandardMetricNames.THREAD_NAME.toString(), Thread.currentThread().getName());
         addTimestamp(StandardMetricNames.START_TIME.toString(), startTime);
 
-        Instant endTime = Instant.now();
+        Instant endTime = clock.instant();
         Duration time = Duration.between(startTime, endTime);
         addTimestamp(StandardMetricNames.END_TIME.toString(), endTime);
         addDuration(StandardMetricNames.TIME.toString(), time);
@@ -82,6 +86,7 @@ public abstract class MetricRecorder implements AutoCloseable {
      * Records an arbitrary String value alongside the other metrics. This is useful to label this group of metrics.
      * If multiple properties are recorded with the same name, implementations *may* choose to throw an exception,
      * but *must* only honor one of them.
+     * Throws an IllegalStateException if the MetricRecorder is already closed.
      */
     public final void addProperty(String name, String value) {
         verifyNotClosed();
@@ -92,6 +97,7 @@ public abstract class MetricRecorder implements AutoCloseable {
      * Records a timestamp.
      * If multiple timestamps are recorded with the same name, implementations *may* choose to throw an exception,
      * but *must* only honor one of them.
+     * Throws an IllegalStateException if the MetricRecorder is already closed.
      */
     public final void addTimestamp(String name, Instant time) {
         verifyNotClosed();
@@ -101,6 +107,7 @@ public abstract class MetricRecorder implements AutoCloseable {
     /**
      * Records a count metric using a specific unit.
      * If multiple counts are recorded with the same name, implementations should aggregate them.
+     * Throws an IllegalStateException if the MetricRecorder is already closed.
      */
     public final void addCount(String name, double count) {
         verifyNotClosed();
@@ -110,6 +117,7 @@ public abstract class MetricRecorder implements AutoCloseable {
     /**
      * Records a specific duration metric.
      * If multiple durations are recorded with the same name, implementations should aggregate them.
+     * Throws an IllegalStateException if the MetricRecorder is already closed.
      */
     public final void addDuration(String name, Duration duration) {
         verifyNotClosed();
@@ -117,22 +125,13 @@ public abstract class MetricRecorder implements AutoCloseable {
     }
 
     /**
-     * Records the current time as reported by Instant.now() as a timestamp with the specified name.
+     * Records the current time as a timestamp with the specified name.
      * Call endDuration() with the same name or close() to record the duration.
      *
      * Returns the stored start time.
+     * Throws an IllegalStateException if the MetricRecorder is already closed.
      */
     public final Instant startDuration(String name) {
-        return startDuration(name, Instant.now());
-    }
-
-    /**
-     * Records the current time as reported by the provided Clock as a timestamp with the specified name.
-     * Call endDuration() with the same name or close() to record the duration.
-     *
-     * Returns the stored start time.
-     */
-    public final Instant startDuration(String name, Clock clock) {
         return startDuration(name, clock.instant());
     }
 
@@ -141,6 +140,7 @@ public abstract class MetricRecorder implements AutoCloseable {
      * Call endDuration() with the same name or close() to record the duration.
      *
      * Returns the stored start time.
+     * Throws an IllegalStateException if the MetricRecorder is already closed.
      */
     public final Instant startDuration(String name, Instant startTime) {
         verifyNotClosed();
@@ -153,32 +153,19 @@ public abstract class MetricRecorder implements AutoCloseable {
 
     /**
      * When startDuration() was called with the same name, this method calls
-     * addDuration() using the duration between the recorded start time
-     * and the current time as reported by Instant.now().
-     *
+     * addDuration() using the duration between the recorded start time and the current time.
      * Returns the measured duration.
+     * Throws an IllegalStateException if the MetricRecorder is already closed.
      */
     public final Duration endDuration(String name) {
-        return endDuration(name, Instant.now());
-    }
-
-    /**
-     * When startDuration() was called with the same name, this method calls
-     * addDuration() using the duration between the recorded start time
-     * and the current time as reported by the provided Clock.
-     *
-     * Returns the measured duration.
-     */
-    public final Duration endDuration(String name, Clock clock) {
         return endDuration(name, clock.instant());
     }
 
     /**
      * When startDuration() was called with the same name, this method calls
-     * addDuration() using the duration between the recorded start time
-     * and the specified end time.
-     *
+     * addDuration() using the duration between the recorded start time and the specified end time.
      * Returns the measured duration.
+     * Throws an IllegalStateException if the MetricRecorder is already closed.
      */
     public final Duration endDuration(String name, Instant endTime) {
         verifyNotClosed();
@@ -226,8 +213,18 @@ public abstract class MetricRecorder implements AutoCloseable {
      */
     protected void addDurationHook(String name, Duration duration) {}
 
+    /**
+     * Allows child classes to retrieve the operation name if needed.
+     */
     protected final String getOperation() {
         return operation;
+    }
+
+    /**
+     * Allows child classes to retrieve the clock if needed.
+     */
+    protected final Clock getClock() {
+        return clock;
     }
 
     private void verifyNotClosed() {
