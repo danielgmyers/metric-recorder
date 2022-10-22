@@ -23,7 +23,7 @@ public interface MetricRecorderFactory {
     /**
      * Specifies the operation about which metrics will be recorded using the produced MetricRecorder.
      *
-     * For example, this should match the name of the workflow step being executed, or the name of some sub-operation.
+     * For example, this could be the name of the API being called, or the name of a discrete sub-operation being performed.
      */
     MetricRecorder newMetricRecorder(String operation);
 }

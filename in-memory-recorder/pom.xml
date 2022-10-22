@@ -35,11 +35,5 @@
             <version>${junit5.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <artifactId>slf4j-nop</artifactId>
-            <groupId>org.slf4j</groupId>
-            <version>${slf4j.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>

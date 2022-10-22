@@ -100,7 +100,7 @@ public abstract class MetricRecorder implements AutoCloseable {
 
     /**
      * Records a count metric using a specific unit.
-     * If multiple counts are recorded with the same name, implementations may choose to aggregate them.
+     * If multiple counts are recorded with the same name, implementations should aggregate them.
      */
     public final void addCount(String name, double count) {
         verifyNotClosed();
@@ -109,7 +109,7 @@ public abstract class MetricRecorder implements AutoCloseable {
 
     /**
      * Records a specific duration metric.
-     * If multiple durations are recorded with the same name, implementations may choose to aggregate them.
+     * If multiple durations are recorded with the same name, implementations should aggregate them.
      */
     public final void addDuration(String name, Duration duration) {
         verifyNotClosed();
