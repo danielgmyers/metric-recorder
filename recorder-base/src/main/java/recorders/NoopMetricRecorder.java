@@ -25,7 +25,7 @@ import com.danielgmyers.metrics.MetricRecorder;
  * We can't use a singleton instance because the disallow-writes-after-close behavior needs to be enforced.
  */
 public class NoopMetricRecorder extends MetricRecorder {
-    protected NoopMetricRecorder(String operation, Clock clock) {
+    public NoopMetricRecorder(String operation, Clock clock) {
         super(operation, clock);
     }
 }
