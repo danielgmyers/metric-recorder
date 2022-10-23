@@ -19,6 +19,7 @@ package com.danielgmyers.metrics.recorders;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,18 +76,48 @@ public class InMemoryMetricRecorder extends MetricRecorder {
     }
 
     public Map<String, Double> getCounts() {
-        return counts;
+        verifyClosed();
+        return Collections.unmodifiableMap(counts);
+    }
+
+    public Double getCount(String metricName) {
+        verifyClosed();
+        return counts.get(metricName);
     }
 
     public Map<String, Duration> getDurations() {
-        return durations;
+        verifyClosed();
+        return Collections.unmodifiableMap(durations);
+    }
+
+    public Duration getDuration(String metricName) {
+        verifyClosed();
+        return durations.get(metricName);
     }
 
     public Map<String, Instant> getTimestamps() {
-        return dates;
+        verifyClosed();
+        return Collections.unmodifiableMap(dates);
+    }
+
+    public Instant getTimestamp(String metricName) {
+        verifyClosed();
+        return dates.get(metricName);
     }
 
     public Map<String, String> getProperties() {
-        return properties;
+        verifyClosed();
+        return Collections.unmodifiableMap(properties);
+    }
+
+    public String getProperty(String metricName) {
+        verifyClosed();
+        return properties.get(metricName);
+    }
+
+    private void verifyClosed() {
+        if (!isClosed()) {
+            throw new IllegalStateException("Metrics should only be retrieved after the recorder is closed.");
+        }
     }
 }
