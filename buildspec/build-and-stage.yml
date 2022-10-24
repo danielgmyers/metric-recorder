@@ -1,0 +1,24 @@
+# builds the project, runs the integration tests, signs the jars, and stages them in maven-central.
+version: 0.2
+env:
+  secrets-manager:
+    GPG_KEY_ID: "gpg-signing-key-id"
+    GPG_PASSPHRASE: "gpg-signing-key-passphrase"
+    GPG_PRIVATE_KEY: "gpg-signing-key-private-key"
+    MAVEN_CENTRAL_USERNAME: "MavenCentral:username"
+    MAVEN_CENTRAL_PASSWORD: "MavenCentral:password"
+phases:
+  install:
+    runtime-versions:
+      java: corretto11
+  pre_build:
+    commands:
+      - mkdir -p ~/.m2/
+      - echo "<settings><servers><server><id>sonatype-nexus-staging</id>" > ~/.m2/settings.xml
+      - echo "<username>${MAVEN_CENTRAL_USERNAME}</username><password>${MAVEN_CENTRAL_PASSWORD}</password>" >> ~/.m2/settings.xml
+      - echo "</server></servers></settings>" >> ~/.m2/settings.xml
+      - echo "$GPG_PRIVATE_KEY" > project-signing-key-private.gpg
+      - gpg --import --passphrase $GPG_PASSPHRASE --batch project-signing-key-private.gpg
+  build:
+    commands:
+      - mvn deploy -P release
