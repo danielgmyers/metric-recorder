@@ -2,7 +2,7 @@ Metric Recorder is an easy interface for recording performance or other measurem
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
-[![CodeBuild status badge](TODO -- build status image)](TODO -- build results link)
+[![CodeBuild status badge](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiWjFpbkNkTW5FbVp4M3ZsY1NleXEyWWtyNzdic25CMXgvU0JJdjEwVVJ1SE8vRUJkSElqZGxRUmNSWVU4b2VwZGxteHZKWTVMOG8zY2tPRk1TSzRJOUVNPSIsIml2UGFyYW1ldGVyU3BlYyI6Im1qL1RmVmVGNHlhSFlyTXAiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=main)](https://us-west-2.codebuild.aws.amazon.com/project/eyJlbmNyeXB0ZWREYXRhIjoiTXVPc0k5Q3VSVlBpTll3WGZYNEpXQ2l4VDZqYnM0eWJiQnVNbVRRMjJBTERqaDhubGZOaVRBVEROQ0thQllpZGdSNFppYnY4R3FlYURZSUlLVDBMdER4MTlOaEpHVWp1cFRjTCIsIml2UGFyYW1ldGVyU3BlYyI6IkQxM2RvSkg0VS9acy9sZ00iLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D)
 
 Prerequisites
 -------------
