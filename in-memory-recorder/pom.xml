@@ -22,7 +22,7 @@
     <dependencies>
         <!-- internal dependencies -->
         <dependency>
-            <artifactId>recorder-base</artifactId>
+            <artifactId>recorder-core</artifactId>
             <groupId>com.danielgmyers.metrics</groupId>
             <version>${recorder.version}</version>
             <optional>false</optional>

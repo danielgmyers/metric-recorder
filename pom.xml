@@ -28,7 +28,7 @@
     </developers>
 
     <modules>
-        <module>recorder-base</module>
+        <module>recorder-core</module>
         <module>in-memory-recorder</module>
     </modules>
 

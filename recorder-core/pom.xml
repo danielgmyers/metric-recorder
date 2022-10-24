@@ -7,8 +7,8 @@
         <artifactId>metric-recorder-pom</artifactId>
         <version>1.0.0</version>
     </parent>
-    <artifactId>recorder-base</artifactId>
-    <name>Metric Recorder Base</name>
+    <artifactId>recorder-core</artifactId>
+    <name>Metric Recorder Core</name>
     <description>Metric Recorder is a library providing a generic interface for recording performance or other metrics.</description>
     <url>https://github.com/danielgmyers/metric-recorder</url>
     <licenses>

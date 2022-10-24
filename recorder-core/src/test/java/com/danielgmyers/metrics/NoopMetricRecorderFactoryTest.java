@@ -22,8 +22,8 @@ import java.time.ZoneId;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import recorders.NoopMetricRecorder;
-import recorders.NoopMetricRecorderFactory;
+import com.danielgmyers.metrics.recorders.NoopMetricRecorder;
+import com.danielgmyers.metrics.recorders.NoopMetricRecorderFactory;
 
 public class NoopMetricRecorderFactoryTest {
 

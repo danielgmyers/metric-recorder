@@ -14,18 +14,19 @@
  *   limitations under the License.
  */
 
-package recorders;
+package com.danielgmyers.metrics.recorders;
 
 import java.time.Clock;
 
 import com.danielgmyers.metrics.MetricRecorder;
+import com.danielgmyers.metrics.MetricRecorderFactory;
 
 /**
- * The default MetricRecorder hooks do nothing, so the base class itself is already a noop recorder.
- * We can't use a singleton instance because the disallow-writes-after-close behavior needs to be enforced.
+ * Produces MetricRecorder objects that discard all metrics.
  */
-public class NoopMetricRecorder extends MetricRecorder {
-    public NoopMetricRecorder(String operation, Clock clock) {
-        super(operation, clock);
+public class NoopMetricRecorderFactory implements MetricRecorderFactory {
+    @Override
+    public MetricRecorder newMetricRecorder(String operation, Clock clock) {
+        return new NoopMetricRecorder(operation, clock);
     }
 }
