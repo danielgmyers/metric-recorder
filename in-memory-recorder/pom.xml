@@ -5,9 +5,11 @@
     <parent>
         <groupId>com.danielgmyers.metrics</groupId>
         <artifactId>metric-recorder-pom</artifactId>
-        <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
+        <version>0</version>
     </parent>
     <artifactId>in-memory-recorder</artifactId>
+    <version>${recorder.inmemory.version}</version>
     <name>In-Memory Metric Recorder</name>
     <description>Metric Recorder is a library providing a generic interface for recording performance or other metrics.</description>
     <url>https://github.com/danielgmyers/metric-recorder</url>
@@ -19,12 +21,16 @@
         </license>
     </licenses>
 
+    <properties>
+        <skip.deploy>false</skip.deploy>
+    </properties>
+
     <dependencies>
         <!-- internal dependencies -->
         <dependency>
             <artifactId>recorder-core</artifactId>
             <groupId>com.danielgmyers.metrics</groupId>
-            <version>${recorder.version}</version>
+            <version>${recorder.core.version}</version>
             <optional>false</optional>
         </dependency>
 
