@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.danielgmyers.metrics</groupId>
     <artifactId>metric-recorder-pom</artifactId>
-    <version>1.0.0</version>
+    <version>0</version>
     <packaging>pom</packaging>
-    <name>Metric Recorder</name>
+    <name>Metric Recorder Base POM</name>
     <description>Metric Recorder is a library providing a generic interface for recording performance or other metrics.</description>
     <url>https://github.com/danielgmyers/metric-recorder</url>
     <licenses>
@@ -38,10 +38,12 @@
         <url>https://github.com/danielgmyers/metric-recorder</url>
     </scm>
     <properties>
-        <recorder.version>${project.version}</recorder.version>
+        <recorder.core.version>1.0.0</recorder.core.version>
+        <recorder.inmemory.version>1.0.0</recorder.inmemory.version>
 
         <junit5.version>5.9.1</junit5.version>
 
+        <mavenplugin.flatten.version>1.6.0</mavenplugin.flatten.version>
         <mavenplugin.compiler.version>3.10.1</mavenplugin.compiler.version>
         <mavenplugin.checkstyle.version>3.2.0</mavenplugin.checkstyle.version>
         <mavenplugin.surefire.version>2.22.2</mavenplugin.surefire.version>
@@ -53,9 +55,37 @@
         <checkstyle.version>10.3.4</checkstyle.version>
 
         <jre.version>11</jre.version>
+
+        <!-- Modules (including this parent pom) won't get deployed by default,
+             they'll need to override this to get deployed. -->
+        <skip.deploy>true</skip.deploy>
     </properties>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>${mavenplugin.flatten.version}</version>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <flattenMode>oss</flattenMode>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -151,6 +181,9 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <skipSource>${skip.deploy}</skipSource>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -164,6 +197,9 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <skip>${skip.deploy}</skip>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -178,6 +214,7 @@
                             </execution>
                         </executions>
                         <configuration>
+                            <skip>${skip.deploy}</skip>
                             <signer>bc</signer>
                             <keyFingerprintEnvName>GPG_KEY_ID</keyFingerprintEnvName>
                             <keyEnvName>GPG_PRIVATE_KEY</keyEnvName>
