@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.danielgmyers.metrics.InvalidMetricConversionException;
+import com.danielgmyers.metrics.MetricUnit;
 import com.danielgmyers.metrics.StandardMetricNames;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -229,6 +231,21 @@ public class InMemoryMetricRecorderTest {
         recorder.close();
         Assertions.assertEquals(metricValue, recorder.getCount(metricName));
         Assertions.assertEquals(metricValue, recorder.getCounts().get(metricName));
+        Assertions.assertEquals(MetricUnit.None, recorder.getCountUnit(metricName));
+        Assertions.assertEquals(MetricUnit.None, recorder.getCountUnits().get(metricName));
+    }
+
+    @Test
+    public void testAddAndGetCountWithUnit() {
+        InMemoryMetricRecorder recorder = new InMemoryMetricRecorder("test");
+        String metricName = "FileSize";
+        Double metricValue = 1.0;
+        recorder.addCount(metricName, metricValue, MetricUnit.GB);
+        recorder.close();
+        Assertions.assertEquals(metricValue, recorder.getCount(metricName));
+        Assertions.assertEquals(metricValue, recorder.getCounts().get(metricName));
+        Assertions.assertEquals(MetricUnit.GB, recorder.getCountUnit(metricName));
+        Assertions.assertEquals(MetricUnit.GB, recorder.getCountUnits().get(metricName));
     }
 
     @Test
@@ -242,6 +259,79 @@ public class InMemoryMetricRecorderTest {
         recorder.close();
         Assertions.assertEquals(20, recorder.getCount(metricName));
         Assertions.assertEquals(20, recorder.getCounts().get(metricName));
+        Assertions.assertEquals(MetricUnit.None, recorder.getCountUnit(metricName));
+        Assertions.assertEquals(MetricUnit.None, recorder.getCountUnits().get(metricName));
+    }
+
+    @Test
+    public void testAddCountAggregatesWithUnit() {
+        InMemoryMetricRecorder recorder = new InMemoryMetricRecorder("test");
+        String metricName = "FileSize";
+        recorder.addCount(metricName, 1.0, MetricUnit.GB);
+        recorder.addCount(metricName, 3.0, MetricUnit.GB);
+        recorder.addCount(metricName, 7.0, MetricUnit.GB);
+        recorder.addCount(metricName, 9.0, MetricUnit.GB);
+        recorder.close();
+        Assertions.assertEquals(20, recorder.getCount(metricName));
+        Assertions.assertEquals(20, recorder.getCounts().get(metricName));
+        Assertions.assertEquals(MetricUnit.GB, recorder.getCountUnit(metricName));
+        Assertions.assertEquals(MetricUnit.GB, recorder.getCountUnits().get(metricName));
+    }
+
+    @Test
+    public void testAddCountAggregatesCompatibleUnitsAndPreservesOriginalUnit() {
+        InMemoryMetricRecorder recorder = new InMemoryMetricRecorder("test");
+        String metricName = "FileSize";
+        recorder.addCount(metricName, 1.0, MetricUnit.GB);
+        recorder.addCount(metricName, 3000.0, MetricUnit.MB);
+        recorder.addCount(metricName, 7000000.0, MetricUnit.KB);
+        recorder.addCount(metricName, 0.009, MetricUnit.TB);
+        recorder.close();
+        Assertions.assertEquals(20, recorder.getCount(metricName));
+        Assertions.assertEquals(20, recorder.getCounts().get(metricName));
+        Assertions.assertEquals(MetricUnit.GB, recorder.getCountUnit(metricName));
+        Assertions.assertEquals(MetricUnit.GB, recorder.getCountUnits().get(metricName));
+    }
+
+    @Test
+    public void testAddCountRejectsMismatchedUnits() {
+        InMemoryMetricRecorder recorder = new InMemoryMetricRecorder("test");
+        String metricName = UUID.randomUUID().toString();
+        Double metricValue = ThreadLocalRandom.current().nextDouble();
+        recorder.addCount(metricName, metricValue);
+
+        // should be rejected because None != Percent
+        Double anotherValue = ThreadLocalRandom.current().nextDouble();
+        MetricUnit wrongMetricUnit = MetricUnit.Percent;
+        Assertions.assertThrows(InvalidMetricConversionException.class,
+                                () -> recorder.addCount(metricName, anotherValue, wrongMetricUnit));
+
+        recorder.close();
+        Assertions.assertEquals(metricValue, recorder.getCount(metricName));
+        Assertions.assertEquals(metricValue, recorder.getCounts().get(metricName));
+        Assertions.assertEquals(MetricUnit.None, recorder.getCountUnit(metricName));
+        Assertions.assertEquals(MetricUnit.None, recorder.getCountUnits().get(metricName));
+    }
+
+    @Test
+    public void testAddCountWithUnitRejectsMismatchedUnits() {
+        InMemoryMetricRecorder recorder = new InMemoryMetricRecorder("test");
+        String metricName = UUID.randomUUID().toString();
+        Double metricValue = ThreadLocalRandom.current().nextDouble();
+        MetricUnit metricUnit = MetricUnit.Gbps;
+        recorder.addCount(metricName, metricValue, metricUnit);
+
+        // should be rejected because Gbps != Percent
+        Double anotherValue = ThreadLocalRandom.current().nextDouble();
+        MetricUnit wrongMetricUnit = MetricUnit.Percent;
+        Assertions.assertThrows(InvalidMetricConversionException.class,
+                                () -> recorder.addCount(metricName, anotherValue, wrongMetricUnit));
+
+        recorder.close();
+        Assertions.assertEquals(metricValue, recorder.getCount(metricName));
+        Assertions.assertEquals(metricValue, recorder.getCounts().get(metricName));
+        Assertions.assertEquals(MetricUnit.Gbps, recorder.getCountUnit(metricName));
+        Assertions.assertEquals(MetricUnit.Gbps, recorder.getCountUnits().get(metricName));
     }
 
     @Test
@@ -260,6 +350,8 @@ public class InMemoryMetricRecorderTest {
         counts.forEach((k, v) -> {
             Assertions.assertEquals(v, recorder.getCount(k));
             Assertions.assertEquals(v, recorder.getCounts().get(k));
+            Assertions.assertEquals(MetricUnit.None, recorder.getCountUnit(k));
+            Assertions.assertEquals(MetricUnit.None, recorder.getCountUnits().get(k));
         });
     }
 
@@ -270,9 +362,13 @@ public class InMemoryMetricRecorderTest {
         Double metricValue = ThreadLocalRandom.current().nextDouble();
         recorder.addCount(metricName, metricValue);
         Assertions.assertThrows(IllegalStateException.class, () -> recorder.getCount(metricName));
+        Assertions.assertThrows(IllegalStateException.class, () -> recorder.getCountUnit(metricName));
         Assertions.assertThrows(IllegalStateException.class, recorder::getCounts);
+        Assertions.assertThrows(IllegalStateException.class, recorder::getCountUnits);
         recorder.close();
         Assertions.assertEquals(metricValue, recorder.getCount(metricName));
         Assertions.assertEquals(metricValue, recorder.getCounts().get(metricName));
+        Assertions.assertEquals(MetricUnit.None, recorder.getCountUnit(metricName));
+        Assertions.assertEquals(MetricUnit.None, recorder.getCountUnits().get(metricName));
     }
 }

@@ -38,8 +38,11 @@
         <url>https://github.com/danielgmyers/metric-recorder</url>
     </scm>
     <properties>
-        <recorder.core.version>1.0.0</recorder.core.version>
-        <recorder.inmemory.version>1.0.0</recorder.inmemory.version>
+        <recorder.core.version>1.1.0</recorder.core.version>
+        <recorder.inmemory.version>1.1.0</recorder.inmemory.version>
+
+        <!-- This is the reference implementation for the javax measurement APIs -->
+        <tech.units.indriya.version>2.2.4</tech.units.indriya.version>
 
         <junit5.version>5.9.1</junit5.version>
 
