@@ -154,6 +154,19 @@ public class MetricRecorderTest {
         recorder.addCount(metricName, metricValue);
         // We know the hook was called if the stub has the metric in its map
         Assertions.assertEquals(metricValue, recorder.getCounts().get(metricName));
+        Assertions.assertEquals(MetricUnit.None, recorder.getCountUnits().get(metricName));
+    }
+
+    @Test
+    public void testAddCountWithUnitCallsAddCountHookWithUnit() {
+        ManualClock clock = new ManualClock();
+        StubMetricRecorder recorder = new StubMetricRecorder("test", clock);
+        String metricName = UUID.randomUUID().toString();
+        double metricValue = ThreadLocalRandom.current().nextDouble();
+        recorder.addCount(metricName, metricValue, MetricUnit.KB);
+        // We know the hook was called if the stub has the metric in its map
+        Assertions.assertEquals(metricValue, recorder.getCounts().get(metricName));
+        Assertions.assertEquals(MetricUnit.KB, recorder.getCountUnits().get(metricName));
     }
 
     @Test
@@ -338,7 +351,7 @@ public class MetricRecorderTest {
         }
 
         @Override
-        protected void addCountHook(String name, double value) {
+        protected void addCountHook(String name, double value, MetricUnit unit) {
             if (!counts.containsKey(name)) {
                 counts.put(name, value);
             } else {
@@ -370,6 +383,11 @@ public class MetricRecorderTest {
 
         public Map<String, Double> getCounts() {
             return counts;
+        }
+
+        @Override
+        public Map<String, MetricUnit> getCountUnits() {
+            return super.getCountUnits();
         }
 
         public Map<String, Duration> getDurations() {

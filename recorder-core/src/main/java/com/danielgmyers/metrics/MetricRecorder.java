@@ -19,6 +19,7 @@ package com.danielgmyers.metrics;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -37,6 +38,7 @@ public abstract class MetricRecorder implements AutoCloseable {
     private final String operation;
 
     private final Map<String, Instant> timers = new HashMap<>();
+    private final Map<String, MetricUnit> countUnits = new HashMap<>();
 
     /**
      * Initializes the MetricRecorder.
@@ -105,13 +107,50 @@ public abstract class MetricRecorder implements AutoCloseable {
     }
 
     /**
-     * Records a count metric using a specific unit.
+     * Records a count metric using a dimensionless unit.
      * If multiple counts are recorded with the same name, implementations should aggregate them.
+     * <p/>
+     * Records MetricUnit.None for each metric name. If some counts are reported with a different unit,
+     * this method will throw InvalidMetricConversionException.
+     * <p/>
      * Throws an IllegalStateException if the MetricRecorder is already closed.
+     * <p/>
+     * In a future version, this method will always delegate to the other addCount with MetricUnit.None.
      */
     public final void addCount(String name, double count) {
         verifyNotClosed();
+        MetricUnit existingUnit = countUnits.get(name);
+        if (existingUnit == null) {
+            countUnits.put(name, MetricUnit.None);
+        } else if (existingUnit != MetricUnit.None) {
+            throw new InvalidMetricConversionException(existingUnit, MetricUnit.None);
+        }
         addCountHook(name, count);
+    }
+
+    /**
+     * Records a count metric using a specific unit.
+     * If multiple counts are recorded with the same name but different units:
+     *  1) if the units are compatible, the new value is converted to the existing unit.
+     *  2) if the units are incompatible, an InvalidMetricConversionException is thrown.
+     * <p/>
+     * If multiple counts are recorded with the same name, implementations should aggregate them. Note that the new count
+     * will already be converted to the existing metric entry's unit when addCountHook is called.
+     * For example, if the existing count is in MetricUnit.GiB, and the application calls addCount with 1024 MetricUnit.MiB,
+     * then the addCountHook method will be called as if the application had called addCount with 1 MetricUnit.GiB.
+     * <p/>
+     * Throws an IllegalStateException if the MetricRecorder is already closed.
+     */
+    public final void addCount(String name, double count, MetricUnit unit) {
+        verifyNotClosed();
+        MetricUnit existingUnit = countUnits.get(name);
+        if (existingUnit != null) {
+            double convertedCount = unit.convertTo(count, existingUnit);
+            addCountHook(name, convertedCount, existingUnit);
+        } else {
+            countUnits.put(name, unit);
+            addCountHook(name, count, unit);
+        }
     }
 
     /**
@@ -202,9 +241,23 @@ public abstract class MetricRecorder implements AutoCloseable {
     /**
      * Hook method for implementation-specific behavior.
      *
+     * Default is to delegate to the other addCountHook with MetricUnit.None.
+     *
+     * Implementations should switch to implementing the newer addCountHook with the MetricUnit parameter instead.
+     */
+    @Deprecated
+    protected void addCountHook(String name, double count) {
+        this.addCountHook(name, count, com.danielgmyers.metrics.MetricUnit.None);
+    }
+
+    /**
+     * Hook method for implementation-specific behavior.
+     *
+     * Note that implementations can call getCountUnits() to look up the units; they do not need to store their own copy.
+     *
      * Default is to do nothing.
      */
-    protected void addCountHook(String name, double count) {}
+    protected void addCountHook(String name, double count, MetricUnit unit) {}
 
     /**
      * Hook method for implementation-specific behavior.
@@ -225,6 +278,13 @@ public abstract class MetricRecorder implements AutoCloseable {
      */
     protected final Clock getClock() {
         return clock;
+    }
+
+    /**
+     * Allows child classes to retrieve the units tied to each count.
+     */
+    protected Map<String, MetricUnit> getCountUnits() {
+        return Collections.unmodifiableMap(countUnits);
     }
 
     private void verifyNotClosed() {

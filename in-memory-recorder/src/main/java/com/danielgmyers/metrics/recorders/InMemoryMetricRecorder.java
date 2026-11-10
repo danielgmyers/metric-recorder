@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.danielgmyers.metrics.MetricRecorder;
+import com.danielgmyers.metrics.MetricUnit;
 
 /**
  * For use in validating metrics emitted by methods under test.
@@ -58,7 +59,7 @@ public class InMemoryMetricRecorder extends MetricRecorder {
     }
 
     @Override
-    protected void addCountHook(String name, double value) {
+    protected void addCountHook(String name, double value, MetricUnit unit) {
         if (!counts.containsKey(name)) {
             counts.put(name, value);
         } else {
@@ -80,9 +81,20 @@ public class InMemoryMetricRecorder extends MetricRecorder {
         return Collections.unmodifiableMap(counts);
     }
 
+    @Override
+    public Map<String, MetricUnit> getCountUnits() {
+        verifyClosed();
+        return super.getCountUnits();
+    }
+
     public Double getCount(String metricName) {
         verifyClosed();
         return counts.get(metricName);
+    }
+
+    public MetricUnit getCountUnit(String metricName) {
+        verifyClosed();
+        return super.getCountUnits().get(metricName);
     }
 
     public Map<String, Duration> getDurations() {
