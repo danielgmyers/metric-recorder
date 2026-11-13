@@ -30,6 +30,7 @@
     <modules>
         <module>recorder-core</module>
         <module>in-memory-recorder</module>
+        <module>emf-log-recorder</module>
     </modules>
 
     <scm>
@@ -40,11 +41,13 @@
     <properties>
         <recorder.core.version>1.1.0</recorder.core.version>
         <recorder.inmemory.version>1.1.0</recorder.inmemory.version>
+        <recorder.emf.version>1.0.0</recorder.emf.version>
 
         <!-- This is the reference implementation for the javax measurement APIs -->
         <tech.units.indriya.version>2.2.4</tech.units.indriya.version>
 
         <junit5.version>5.9.1</junit5.version>
+        <easymock.version>5.0.0</easymock.version>
 
         <mavenplugin.flatten.version>1.6.0</mavenplugin.flatten.version>
         <mavenplugin.compiler.version>3.10.1</mavenplugin.compiler.version>
