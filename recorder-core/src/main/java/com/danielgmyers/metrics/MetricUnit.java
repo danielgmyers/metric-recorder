@@ -31,13 +31,13 @@ import tech.units.indriya.unit.Units;
  * Some backends may not support all types or granularities, but where possible,
  * MetricRecorder implementations should convert the provided metric unit into
  * a supported metric, and MUST document where it deviates.
- * <p/>
+ *
  * The initial reference list is based on those supported by Amazon CloudWatch
  * as well as those given as example base units by the Prometheus documentation.
- * <p/>
+ *
  * For convenience in implementing recorders, this class provides utility methods
  * for converting values between compatible units.
- * <p/>
+ *
  * Note that durations are explicitly not supported here, since MetricRecorder
  * models durations directly with the native Java Duration type.
  */

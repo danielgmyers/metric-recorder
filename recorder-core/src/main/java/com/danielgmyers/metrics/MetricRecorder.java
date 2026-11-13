@@ -109,12 +109,12 @@ public abstract class MetricRecorder implements AutoCloseable {
     /**
      * Records a count metric using a dimensionless unit.
      * If multiple counts are recorded with the same name, implementations should aggregate them.
-     * <p/>
+     *
      * Records MetricUnit.None for each metric name. If some counts are reported with a different unit,
      * this method will throw InvalidMetricConversionException.
-     * <p/>
+     *
      * Throws an IllegalStateException if the MetricRecorder is already closed.
-     * <p/>
+     *
      * In a future version, this method will always delegate to the other addCount with MetricUnit.None.
      */
     public final void addCount(String name, double count) {
@@ -133,12 +133,12 @@ public abstract class MetricRecorder implements AutoCloseable {
      * If multiple counts are recorded with the same name but different units:
      *  1) if the units are compatible, the new value is converted to the existing unit.
      *  2) if the units are incompatible, an InvalidMetricConversionException is thrown.
-     * <p/>
+     *
      * If multiple counts are recorded with the same name, implementations should aggregate them. Note that the new count
      * will already be converted to the existing metric entry's unit when addCountHook is called.
      * For example, if the existing count is in MetricUnit.GiB, and the application calls addCount with 1024 MetricUnit.MiB,
      * then the addCountHook method will be called as if the application had called addCount with 1 MetricUnit.GiB.
-     * <p/>
+     *
      * Throws an IllegalStateException if the MetricRecorder is already closed.
      */
     public final void addCount(String name, double count, MetricUnit unit) {

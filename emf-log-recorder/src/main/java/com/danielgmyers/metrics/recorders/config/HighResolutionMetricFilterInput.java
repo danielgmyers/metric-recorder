@@ -20,7 +20,7 @@ package com.danielgmyers.metrics.recorders.config;
  * Information in this structure should be used to determine whether a given metric name
  * should be tracked as a "high resolution" metric. Counts and Durations that meet this filter are written
  * to the EMF log with 1-second resolution, instead of 60-second resolution.
- * <p/>
+ *
  * Fields:
  *     metricNamespace: Matches the namespace provided in the call to the EmfLogRecorderFactory constructor.
  *     operationName: Matches the name provided in the call to EmfLogRecorderFactory.newMetricRecorder().

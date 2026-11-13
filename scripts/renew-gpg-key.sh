@@ -1,5 +1,5 @@
 #!/bin/bash
-set +e
+set -e
 
 if ! command -v aws &> /dev/null
 then

@@ -20,7 +20,7 @@ package com.danielgmyers.metrics.recorders.config;
  * Information in this structure should be used to determine whether a given property name
  * should be used as a Dimension when generating metrics. Properties or Timestamps that meet this filter
  * are removed from the normal Property list in the EMF output, and included instead as Dimensions.
- * <p/>
+ *
  * Fields:
  *     metricNamespace: Matches the namespace provided in the call to the EmfLogRecorderFactory constructor.
  *     operationName: Matches the name provided in the call to EmfLogRecorderFactory.newMetricRecorder().
