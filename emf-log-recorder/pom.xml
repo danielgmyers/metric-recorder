@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.danielgmyers.metrics</groupId>
+        <artifactId>metric-recorder-pom</artifactId>
+        <relativePath>../pom.xml</relativePath>
+        <version>0</version>
+    </parent>
+    <artifactId>emf-log-recorder</artifactId>
+    <version>${recorder.emf.version}</version>
+    <name>EMF Metric Recorder</name>
+    <description>Metric Recorder is a library providing a generic interface for recording performance or other metrics.</description>
+    <url>https://github.com/danielgmyers/metric-recorder</url>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <properties>
+        <aws-embedded-metrics.version>4.2.0</aws-embedded-metrics.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <artifactId>aws-embedded-metrics</artifactId>
+            <groupId>software.amazon.cloudwatchlogs</groupId>
+            <version>${aws-embedded-metrics.version}</version>
+        </dependency>
+
+        <!-- internal dependencies -->
+        <dependency>
+            <artifactId>recorder-core</artifactId>
+            <groupId>com.danielgmyers.metrics</groupId>
+            <version>${recorder.core.version}</version>
+            <optional>false</optional>
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit5.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>${easymock.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

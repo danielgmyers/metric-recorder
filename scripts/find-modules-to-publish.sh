@@ -40,6 +40,7 @@ check_module_published() {
 
 check_module_published 'recorder-core'
 check_module_published 'in-memory-recorder'
+check_module_published 'emf-log-recorder'
 
 if [ "${#TO_PUBLISH[@]}" == 0 ]; then
     echo "Nothing to publish"
