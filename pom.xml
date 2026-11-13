@@ -61,6 +61,13 @@
         <checkstyle.version>10.3.4</checkstyle.version>
 
         <jre.version>11</jre.version>
+
+        <!--
+            A comma-separated list of modules that should be excluded when publishing.
+            This is in addition to the 'ignore published components' setting that is
+            always enabled.
+        -->
+        <publishing.exclude.modules>metric-recorder-pom</publishing.exclude.modules>
     </properties>
     <build>
         <plugins>
@@ -226,6 +233,8 @@
                         <configuration>
                             <publishingServerId>central</publishingServerId>
                             <autoPublish>${publishing.publishAfterStaging}</autoPublish>
+                            <ignorePublishedComponents>true</ignorePublishedComponents>
+                            <excludeArtifacts>${publishing.exclude.modules}</excludeArtifacts>
                         </configuration>
                     </plugin>
                 </plugins>

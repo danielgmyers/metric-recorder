@@ -36,7 +36,7 @@ public class EmfLogRecorderConfig {
     /**
      * Metrics Namespace is a required input for the configuration. This controls which CloudWatch
      * namespace the metrics emitted by this recorder are stored in.
-     * <p/>
+     *
      * Note that this does mean if you want to emit metrics in multiple namespaces, you will need
      * multiple config objects, one per namespace, and one EmfLogRecorderFactory per configuration.
      */
@@ -48,7 +48,7 @@ public class EmfLogRecorderConfig {
      * The emfLoggerEnvironment parameter controls how the underlying MetricsLogger library behaves
      * when writing out the actual log files. In particular, it controls what data is emitted as
      * additional properties and/or dimensions.
-     * <p/>
+     *
      * By default, EmfLogRecorder will use `EnvironmentProvidier.getDefaultEnvironment()` from
      * the `aws-embedded-metrics` library, which is usually what you'll want when running in
      * an AWS environment like Lambda, ECS, or EC2.
@@ -78,14 +78,14 @@ public class EmfLogRecorderConfig {
      * The common MetricRecorder interface does not define "Dimension" as a first-class concept.
      * Consequently, this filter allows you to control whether values added as properties
      * (through either `addTimestamp` or `addProperty`) are treated instead as CloudWatch Dimensions.
-     * <p/>
+     *
      * Either way, the value will be emitted in the top-level list of properties in the EMF record,
      * but if this filter returns `true`, then the property name will also be included in the list of
      * Dimensions for all data points in the EMF record.
-     * <p/>
+     *
      * See the documentation for `DimensionPropertyFilterInput` for details about what data
      * is provided to the filter to use when making the decision.
-     * <p/>
+     *
      * The default behavior evaluates to `false` for all queries.
      */
     public void setDimensionPropertyFilter(Function<DimensionPropertyFilterInput, Boolean> dimensionPropertyFilter) {
@@ -102,14 +102,14 @@ public class EmfLogRecorderConfig {
      * reported to the destination service. In the case of CloudWatch, by default metric data is recorded
      * with a timestamp at 1-minute resolution, so any metrics emitted during that minute on the application
      * side end up recorded in CloudWatch under the same timestamp.
-     * <p/>
+     *
      * However, CloudWatch does support higher resolution metrics. This filter allows you to opt in on a
      * per-metric basis (for metrics added via `addCount` or `addDuration`) to enable the higher-resolution
      * setting on that data point.
-     * <p/>
+     *
      * See the documentation for `HighResolutionMetricFilterInput` for details about what data
      * is provided to the filter to use when making the decision.
-     * <p/>
+     *
      * The default behavior evaluates to `false` for all queries.
      */
     public void setHighResolutionMetricFilter(Function<HighResolutionMetricFilterInput, Boolean> highResolutionMetricFilter) {
@@ -125,45 +125,45 @@ public class EmfLogRecorderConfig {
      * Specifically, if you submit metrics as "Megabytes/second", you must also retrieve the data points as
      * "Megabytes/second"; it will not automatically convert them to "Kilobytes/second" on demand.
      * (Instead you get no metric data back at all.)
-     * </p>
+     *
      * Users can specify units as a way of providing additional context without needing to embed
      * the unit in the metric name itself.
-     * </p>
+     *
      * We want EmfLogRecorder to preserve the user's intent when we actually publish to CloudWatch.
      * In support of that, we need to do two things:
      * 1) Map our MetricUnits directly to the corresponding CloudWatch units, where possible.
      * 2) Map our MetricUnits to a _semantically similar_ CloudWatch unit, where there is no direct match.
-     * </p>
+     *
      * For example, CloudWatch doesn't support an "Exabytes/second" unit, so if we had an equivalent
      * in our MetricUnit list, we would want to convert the raw data and the unit reported to CloudWatch
      * such that it behaves as if the customer had reported the original data with MetricUnit.TBps.
-     * </p>
+     *
      * For historical reasons, there is a complication we should account for:
-     * </p>
+     *
      * CloudWatch's supported unit list includes e.g. "Megabytes/second" but not "Mebibytes/second".
      * Many people/systems/contexts still casually use MBps to refer to the base 2 measurement,
      * and we don't want to inadvertently cause confusion for users by publishing the data with the value
      * converted to an unexpected unit.
-     * </p>
+     *
      * For example, if they report MetricUnit.MiBps, we have a few options:
      * a) we can report the value as-is, but pick the "Megabytes/second" unit in CloudWatch. This works
      *    but produces confusing results if the user _also_ reports data in MBps.
      * b) we can assume CloudWatch's unit is base 10, and transparently convert base 2 values to base 10
      *    when recording the data.
      * c) we can assume CloudWatch's unit is base 2, and report the user's base 2 value as-is.
-     * </p>
+     *
      * Conversely, we have the same dilemma in reverse if the user reports MetricUnit.MBps, and if
      * they report both, then a hardcoded assumption either way would be wrong.
-     * </p>
+     *
      * To address this ambiguity, EmfLogReporterConfig includes a flag for toggling whether CloudWatch's
      * data transfer and data storage units are treated as base 2 or base 10.
-     * </p>
+     *
      * Whenever the user reports a data transfer or data storage metric using the MetricUnit that is
      * *not* configured to map to CloudWatch's data transfer unit, that value will be converted to the
      * other prior to publishing (so, by default, 42 MiBps will be reported as 44.0402 "Megabytes/second").
-     * <p/>
+     *
      * Note that this behavior applies to both the data storage (MiB) and data transfer (MiBps) units.
-     * <p/>
+     *
      * By default, we treat MetricUnit.MBps the same as CloudWatch's "Megabytes/second" unit, but the
      * toggle allows the user to tell us to treat MetricUnit.MiBps as "Megabytes/second" instead.
      */
@@ -180,7 +180,7 @@ public class EmfLogRecorderConfig {
      * `aws-embedded-metrics` library used under the covers to write the log files.
      * Generally this includes the `LogGroup`, `ServiceName`, and `ServiceType` properties,
      * but may include others depending on the environment.
-     * <p/>
+     *
      * The default is `false`.
      */
     public void setIncludeDefaultAwsEmbeddedMetricsDimensions(boolean includeDefaultAwsEmbeddedMetricsDimensions) {
